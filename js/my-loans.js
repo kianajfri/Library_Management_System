@@ -3,10 +3,6 @@ const BASE_API_URL = "https://karyar-library-management-system.liara.run/api";
 
 document.addEventListener("DOMContentLoaded", loadLoans);
 
-// ----------------------------
-// Helpers
-// ----------------------------
-
 function getToken() {
   const match = document.cookie.match(/(^| )token=([^;]+)/);
   return match ? match[2] : null;
@@ -27,11 +23,6 @@ async function apiFetch(endpoint, options = {}) {
   if (!res.ok) throw new Error("Request failed: " + res.status);
   return res.json();
 }
-
-// ----------------------------
-// Load user loans
-// ----------------------------
-
 async function loadLoans() {
   const tbody = document.querySelector("tbody");
   const totalText = document.querySelector(".card-header span");
@@ -95,10 +86,6 @@ if (!Array.isArray(loans)) {
   }
 }
 
-// ----------------------------
-// Return book
-// ----------------------------
-
 async function returnBook(loanId) {
   if (!confirm("Return this book?")) return;
   try {
@@ -110,10 +97,6 @@ async function returnBook(loanId) {
     alert("Could not return book.");
   }
 }
-
-// ----------------------------
-// Logout
-// ----------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
   const logoutLink = document.querySelector('a[href="login.html"]');

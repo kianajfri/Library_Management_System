@@ -28,10 +28,6 @@ async function apiFetch(endpoint, options = {}) {
   return res.json();
 }
 
-// ----------------------------
-// Load books
-// ----------------------------
-
 async function loadBooks() {
   const container = document.querySelector(".grid");
   container.innerHTML = "<p>Loading books...</p>";
@@ -78,10 +74,6 @@ if (!Array.isArray(books)) {
   }
 }
 
-// ----------------------------
-// Borrow book
-// ----------------------------
-
 async function borrowBook(bookId) {
   if (!confirm("Borrow this book?")) return;
 
@@ -91,24 +83,16 @@ async function borrowBook(bookId) {
       body: JSON.stringify({ bookId }),
     });
     alert("Book borrowed successfully!");
-    loadBooks(); // reload after borrowing
+    loadBooks(); 
   } catch (err) {
     console.error("Borrow failed:", err);
     alert("Could not borrow book.");
   }
 }
 
-// ----------------------------
-// View book details
-// ----------------------------
-
 function viewDetails(bookId) {
   alert("Book details page not implemented yet. (Book ID: " + bookId + ")");
 }
-
-// ----------------------------
-// Logout
-// ----------------------------
 
 document.addEventListener("DOMContentLoaded", () => {
   const logoutLink = document.querySelector('a[href="login.html"]');
