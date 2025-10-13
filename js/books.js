@@ -3,10 +3,6 @@ const BASE_API_URL = "https://karyar-library-management-system.liara.run/api";
 
 document.addEventListener("DOMContentLoaded", loadBooks);
 
-// ----------------------------
-// Helpers
-// ----------------------------
-
 function getToken() {
   const match = document.cookie.match(/(^| )token=([^;]+)/);
   return match ? match[2] : null;
