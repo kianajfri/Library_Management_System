@@ -1,4 +1,3 @@
-// ✅ Base API URL
 const BASE_API_URL = "https://karyar-library-management-system.liara.run/api";
 
 document.addEventListener("DOMContentLoaded", loadBooks);
@@ -28,17 +27,31 @@ async function loadBooks() {
   const container = document.querySelector(".grid");
   container.innerHTML = "<p>Loading books...</p>";
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  
+    const firstName = user.firstName || "Student";
+    const lastName = user.lastName || "";
+
+    document.getElementById("userName").textContent = `${firstName} ${lastName}`;
+    document.getElementById("userAvatar").textContent = firstName.charAt(0).toUpperCase();
+
   try {
-   let books = await apiFetch("/books");
-if (!Array.isArray(books)) {
-  books = books.data || books.books || [];
-}
+    let response = await apiFetch("/books");
+    let books = response.data;
+    console.log(books)
+
     container.innerHTML = "";
     books.forEach((book) => {
+      const available = book.availableCopies > 0;
+
       const card = document.createElement("div");
       card.className = "card";
 
-      const available = book.availableCopies > 0;
+      const tagsHTML = (book.tags || [])
+        .map(tag => `<span class="tag">${tag}</span>`)
+        .join(" ");
+
       card.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:1rem;">
           <h3 style="margin:0;color:#2c3e50;">${book.title}</h3>
@@ -47,15 +60,21 @@ if (!Array.isArray(books)) {
           </span>
         </div>
         <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
+        <p><strong>Publisher:</strong> ${book.publisher || "N/A"}</p>
+        <p><strong>Year:</strong> ${book.publicationYear || "N/A"}</p>
         <p><strong>ISBN:</strong> ${book.isbn || "N/A"}</p>
         <p><strong>Category:</strong> ${book.category?.name || "N/A"}</p>
         <p><strong>Available Copies:</strong> ${book.availableCopies}</p>
+        <p><strong>Borrowed Copies:</strong> ${book.borrowedCopies}</p>
         <p style="font-size:0.9rem;color:#555;margin-bottom:1rem;">${book.description || ""}</p>
+        
+        ${tagsHTML ? `<div class="tags" style="margin-bottom:1rem;">${tagsHTML}</div>` : ""}
+
         <div style="display:flex;gap:0.5rem;">
-          <button class="btn btn-primary btn-sm" ${!available ? "disabled" : ""} data-id="${book._id}">
+          <button class="btn btn-primary btn-sm" ${!available ? "disabled" : ""} data-id="${book.id}">
             ${available ? "Borrow Book" : "Not Available"}
           </button>
-          <button class="btn btn-secondary btn-sm" onclick="viewDetails('${book._id}')">View Details</button>
+          <button class="btn btn-secondary btn-sm" onclick="viewDetails('${book.id}')">View Details</button>
         </div>
       `;
       container.appendChild(card);
@@ -71,32 +90,46 @@ if (!Array.isArray(books)) {
 }
 
 async function borrowBook(bookId) {
-  if (!confirm("Borrow this book?")) return;
+  const days = prompt("How many days do you want to borrow this book?");
+  if (!days || isNaN(days) || days <= 0) {
+    alert("Please enter a valid number of days.");
+    return;
+  }
+
+  const token = getToken();
+  if (!token) {
+    alert("You are not logged in!");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user.id;
+  if (!userId) {
+    alert("User ID not found. Please log in again.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const loanPeriod = parseInt(days);
+  const dueDate = new Date();
+  dueDate.setDate(dueDate.getDate() + loanPeriod);
 
   try {
     await apiFetch("/loans", {
       method: "POST",
-      body: JSON.stringify({ bookId }),
+      body: JSON.stringify({
+        bookId,
+        userId,
+        loanPeriod,
+        dueDate: dueDate.toISOString(),
+      }),
     });
-    alert("Book borrowed successfully!");
-    loadBooks(); 
+
+    alert(`Book borrowed for ${loanPeriod} days successfully!`);
+    loadBooks();
   } catch (err) {
     console.error("Borrow failed:", err);
     alert("Could not borrow book.");
   }
 }
-
-function viewDetails(bookId) {
-  alert("Book details page not implemented yet. (Book ID: " + bookId + ")");
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const logoutLink = document.querySelector('a[href="login.html"]');
-  if (logoutLink) {
-    logoutLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-      window.location.href = "login.html";
-    });
-  }
-});

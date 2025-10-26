@@ -17,16 +17,7 @@ async function loadDashboard() {
   }
 
   try {
-
-    const profileRes = await fetch(`${BASE_API_URL}/auth/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!profileRes.ok) throw new Error("Failed to load profile");
-
-    const profileJson = await profileRes.json();
-
-    const userData = profileJson.user || profileJson || {};
-
+    const user = JSON.parse(localStorage.getItem("user"));
     const booksRes = await fetch(`${BASE_API_URL}/books`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -34,9 +25,9 @@ async function loadDashboard() {
 
     const booksData = await booksRes.json();
 
-    const firstName = userData.firstName || "Student";
-    const lastName = userData.lastName || "";
-    const loansCount = userData.activeLoansCount ?? 0;
+    const firstName = user.firstName || "Student";
+    const lastName = user.lastName || "";
+    const loansCount = user.activeLoansCount ?? 0;
     const booksCount = Array.isArray(booksData) ? booksData.length : 0;
 
     document.getElementById("studentName").textContent = firstName;

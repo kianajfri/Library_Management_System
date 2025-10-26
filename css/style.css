@@ -57,7 +57,7 @@ body {
 }
 
 .nav a:hover, .nav a.active {
-    color: #3498db;
+    color: #F79B72;
 }
 
 .user-info {
@@ -70,7 +70,7 @@ body {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #3498db;
+    background: #F79B72;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -122,22 +122,25 @@ body {
 }
 
 .btn-primary {
-    background: #3498db;
+    background: #2A4759;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #2980b9;
+    background: #1b2e3a;
     transform: translateY(-1px);
+    transition: 500ms;
 }
 
 .btn-success {
-    background: #27ae60;
+    background: #2A4759;
     color: white;
 }
 
 .btn-success:hover {
-    background: #229954;
+    background: #1b2e3a;
+    transition: 500ms;
+    transform: translateY(-1px);
 }
 
 .btn-danger {
@@ -186,7 +189,7 @@ body {
 
 .form-input:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #F79B72;
 }
 
 .form-select {
@@ -247,16 +250,16 @@ body {
 }
 
 .status-available {
-    background: #d4edda;
-    color: #155724;
+    background: #F79B72;
+    color: white;
 }
 
 .status-unavailable {
-    background: #f8d7da;
-    color: #721c24;
+    background: #DDDDDD;
+    color: white;
 }
 
-/* Grid Layout */
+
 .grid {
     display: grid;
     gap: 1.5rem;
@@ -283,7 +286,7 @@ body {
 .stat-number {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #3498db;
+    color: #F79B72;
     margin-bottom: 0.5rem;
 }
 
@@ -333,9 +336,9 @@ body {
 
 .pagination a:hover,
 .pagination a.active {
-    background: #3498db;
+    background: #F79B72;
     color: white;
-    border-color: #3498db;
+    border-color: #F79B72;
 }
 
 /* Alerts */
@@ -369,7 +372,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #EEEEEE;
 }
 
 .login-card {
@@ -385,7 +388,7 @@ body {
     text-align: center;
     margin-bottom: 2rem;
     color: #2c3e50;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
 }
 
 /* Responsive Design */
@@ -431,7 +434,7 @@ body {
     width: 20px;
     height: 20px;
     border: 3px solid #f3f3f3;
-    border-top: 3px solid #3498db;
+    border-top: 3px solid #F79B72;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

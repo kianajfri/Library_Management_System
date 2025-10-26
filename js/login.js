@@ -1,11 +1,10 @@
-
 const API_URL = "https://karyar-library-management-system.liara.run/api";
 
-function saveToken(token){
+function saveToken(token) {
   document.cookie = `token=${token}; path=/; max-age=${24 * 60 * 60}`;
 }
 
-function getToken(){
+function getToken() {
   const match = document.cookie.match(/(^| )token=([^;]+)/);
   return match ? match[2] : null;
 }
@@ -14,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
   const alertBox = document.getElementById("alert-container");
 
-  if (getToken()){
+  if (getToken()) {
     window.location.href = "dashboard.html";
     return;
   }
@@ -27,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     alertBox.innerHTML = "Loading...";
 
-    try{
+    try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,12 +35,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await response.json();
 
-      if(!response.ok) {
+      if (!response.ok) {
         alertBox.innerHTML = `<div class="alert error">${data.message || "Login failed"}</div>`;
         return;
       }
 
       saveToken(data.token);
+
+      delete data.user.password
+      localStorage.setItem("user", JSON.stringify(data.user));
+
       window.location.href = "dashboard.html";
     } catch (err) {
       alertBox.innerHTML = `<div class="alert error">${err.message}</div>`;

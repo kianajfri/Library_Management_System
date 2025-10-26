@@ -31,6 +31,14 @@ async function loadLoans() {
 
   tbody.innerHTML = "<tr><td colspan='5'>Loading loans...</td></tr>";
 
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const firstName = user.firstName || "Student";
+    const lastName = user.lastName || "";
+
+    document.getElementById("userName").textContent = `${firstName} ${lastName}`;
+    document.getElementById("userAvatar").textContent = firstName.charAt(0).toUpperCase();
+
   try {
     let loans = await apiFetch("/loans/my-loans");
 if (!Array.isArray(loans)) {
@@ -47,9 +55,10 @@ if (!Array.isArray(loans)) {
 
     loans.forEach((loan) => {
       const book = loan.book || {};
-      const active = !loan.returnedDate;
+      const active = loan.status == "active";
       if (active) activeCount++;
       else returnedCount++;
+      console.log(loan);
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
@@ -58,14 +67,14 @@ if (!Array.isArray(loans)) {
           <small style="color:#666;">ISBN: ${book.isbn || "N/A"}</small>
         </td>
         <td>${book.author || "Unknown"}</td>
-        <td>${new Date(loan.borrowedDate).toLocaleDateString()}</td>
-        <td><span class="status ${active ? "status-active" : "status-returned"}">
+        <td>${new Date(loan.loanDate).toLocaleDateString()}</td>
+        <td><span class="status ${active ? "active" : "returned"}">
           ${active ? "Active" : "Returned"}
         </span></td>
         <td>
           ${
             active
-              ? `<button class="btn btn-success btn-sm" data-id="${loan._id}">Return</button>`
+              ? `<button class="btn btn-success btn-sm" data-id="${loan.id}">Return</button>`
               : `<button class="btn btn-secondary btn-sm" disabled>Returned</button>`
           }
         </td>
@@ -89,6 +98,7 @@ if (!Array.isArray(loans)) {
 async function returnBook(loanId) {
   if (!confirm("Return this book?")) return;
   try {
+    console.log(loanId)
     await apiFetch(`/loans/${loanId}/return`, { method: "POST" });
     alert("Book returned successfully!");
     loadLoans();
